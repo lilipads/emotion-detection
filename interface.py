@@ -1,3 +1,5 @@
+"""Andrew"""
+
 class Layer(object):
 	def __init__(self, ci, cn, co, property):
 
@@ -34,6 +36,7 @@ class TanSig:
     Hyperbolic tangent sigmoid transfer function
     """
 
+""" Lili"""
 class Trainer(object):
 	def __init__(self, Train, epochs=500, goal=0.01, show=100, **kwargs):
 
