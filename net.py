@@ -12,6 +12,7 @@ class Net(object):
 
 		The function initializes the parameters and framework for the network.
 		"""
+		self.numlayers = len(self.sizes)
 
 	def feedforward(self,input):
 		"""
@@ -71,8 +72,6 @@ class Net(object):
 		Set activation to a list containing x  # x is the input activation
 		Set zlist to empty list  # zlist is the list of z activations
 		"""
-
-		numlayers = len(self.sizes)
 		sig_prime_vec = np.vectorize(sig_prime)
 		sig_vec = np.vectorize(sig)
 
@@ -91,9 +90,24 @@ class Net(object):
 
 		gradcost = a - y  # Gradient of the cost function with respect to the activation outputs
 
-		del_l = gradcost*sig_prime_vec()
+		delt_l = gradcost*sig_prime_vec(output) # Error delta for last layer
+		delts = []
+		delts.append(delt_l)
 
-		
+		for i in range(2, numlayers+1): # Calculate errors for previous layers
+			delt = (np.dot(np.tranpose(weights[numlayers-i]),delts[i])*
+					sig_prime_vec(zlist[numlayers-i]))
+			delts.append(delt)
+
+		delts = delts.reverse
+		grad_biases = delts.pop(0) # Calculate the partial derivatives of the cost function wrt to biases
+
+		grad_weights = []
+		for i in range(1, numlayers): # Calculate the gradient with respect to the weights
+			gweight = np.dot(delts[i],activation[i-1])
+			grad_weights.append(gweight)
+
+		return(grad_weights,grad_biases)
 
 
 	def evaluate(self,test_data):
@@ -102,7 +116,7 @@ class Net(object):
 
 
 def sig(x):
-	return 1.0/(1.0 + np.exp(-x)
+	return 1.0/(1.0 + np.exp(-x))
 
 def sig_prime(x):
 	return sig(x) * (1-sig(x))
