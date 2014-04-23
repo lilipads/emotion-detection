@@ -12,13 +12,11 @@ class Net(object):
 
 		The function initializes the parameters and framework for the network.
 		"""
-
-	def feedforward(self,input):
-		"""
-		Gives the output of the network given an input. The function feeds
-		the input through each layer of the network with the current weights
-		and biases.
-		"""
+		self.sizes = sizes
+		self.numlayers = len(sizes)
+		self.weights = [np.random.randn((self.sizes[0],self.sizes[1])), 
+		  np.random.randn((self.sizes[1],self.sizes[2]))]
+		self.biasess = [np.random.randn(self.sizes[1]), np.random.randn(self.sizes[2])]
 
 	def SGD(self, train_data, epochs, mini_batch_size, eta):
 		"""
@@ -40,12 +38,32 @@ class Net(object):
 			eta: The constant that determines how much the weights and biases
 				change in the direction of the calculated gradient. 
 		"""
+		for i in range(epochs):
+			random.shuffle(train_data) # shuffle the data to randomly devide it into mini batches later
+			cur = 0
+			while cur < len(train_data):
+				mini_batch = train_data[cur : cur + mini_batch_size]
+				cur += mini_batch_size
+				update_weights(mini_batch, eta)
 
 	def update_weights (self, mini_batch, eta):
 		"""
 		Updates the weights and biases by applying gradient descent to the 
 		mini-batch passed into the function. 
 		"""
+		delta_weights = [np.zeros((self.sizes[0],self.sizes[1])), np.zeros((self.sizes[1],self.sizes[2]))]
+		delta_biases = [np.zeros(self.sizes[1]), np.zeros(self.sizes[2])]
+		
+		for x, y in mini_batch:
+			delta_weights_temp, delta_biases_temp = backprop(x, y)
+			for i in range(self.numlayers):
+				delta_weights[i] += delta_weights_temp[i]
+				delta_biases[i] += delta_biases_temp[i]
+		
+		# adjust the weights
+		for i in range(self.numlayers):
+			self.weights[i] += delta_weights[i]
+			self.biases[i] += delta_biases[i]
 
 	def backprop(self,x,y):
 		"""
@@ -93,16 +111,12 @@ class Net(object):
 
 		del_l = gradcost*sig_prime_vec()
 
-		
-
-
 	def evaluate(self,test_data):
-
-	def cost_derivative(self, output, y):
+		raise TODO
 
 
 def sig(x):
-	return 1.0/(1.0 + np.exp(-x)
+	return 1.0/(1.0 + np.exp(-x))
 
 def sig_prime(x):
 	return sig(x) * (1-sig(x))
