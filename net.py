@@ -1,5 +1,4 @@
 import random
-
 import numpy as np
 
 class Net(object):
@@ -12,11 +11,12 @@ class Net(object):
 
 		The function initializes the parameters and framework for the network.
 		"""
+
 		self.sizes = sizes
 		self.numlayers = len(sizes)
-		self.weights = [np.random.randn((self.sizes[0],self.sizes[1])), 
-		  np.random.randn((self.sizes[1],self.sizes[2]))]
+		self.weights = [np.random.randn(self.sizes[0],self.sizes[1]), np.random.randn(self.sizes[1],self.sizes[2])]
 		self.biasess = [np.random.randn(self.sizes[1]), np.random.randn(self.sizes[2])]
+
 
 	def SGD(self, train_data, epochs, mini_batch_size, eta):
 		"""
@@ -44,7 +44,7 @@ class Net(object):
 			while cur < len(train_data):
 				mini_batch = train_data[cur : cur + mini_batch_size]
 				cur += mini_batch_size
-				update_weights(mini_batch, eta)
+				self.update_weights(mini_batch, eta)
 
 	def update_weights (self, mini_batch, eta):
 		"""
@@ -55,7 +55,7 @@ class Net(object):
 		delta_biases = [np.zeros(self.sizes[1]), np.zeros(self.sizes[2])]
 		
 		for x, y in mini_batch:
-			delta_weights_temp, delta_biases_temp = backprop(x, y)
+			delta_weights_temp, delta_biases_temp = self.backprop(x, y)
 			for i in range(self.numlayers):
 				delta_weights[i] += delta_weights_temp[i]
 				delta_biases[i] += delta_biases_temp[i]
@@ -89,8 +89,6 @@ class Net(object):
 		Set activation to a list containing x  # x is the input activation
 		Set zlist to empty list  # zlist is the list of z activations
 		"""
-
-		numlayers = len(self.sizes)
 		sig_prime_vec = np.vectorize(sig_prime)
 		sig_vec = np.vectorize(sig)
 
@@ -98,6 +96,8 @@ class Net(object):
 		activation.append(x)
 		zlist = []
 		zlist.append(x)
+
+		numlayers = self.numlayers
 
 		for i in range(numlayers - 1):
 			a = np.dot(self.weights[i],x) + self.biases[i]
@@ -109,7 +109,24 @@ class Net(object):
 
 		gradcost = a - y  # Gradient of the cost function with respect to the activation outputs
 
-		del_l = gradcost*sig_prime_vec()
+		delt_l = gradcost * sig_prime_vec(output) # Error delta for last layer
+		delts = []
+		delts.append(delt_l)
+
+		for i in range(2, numlayers + 1): # Calculate errors for previous layers
+			delt = (np.dot(np.tranpose(weights[numlayers - i]),delts[i])*
+					sig_prime_vec(zlist[numlayers - i]))
+			delts.append(delt)
+
+		delts = delts.reverse
+		grad_biases = delts.pop(0) # Calculate the partial derivatives of the cost function wrt to biases
+
+		grad_weights = []
+		for i in range(1, numlayers): # Calculate the gradient with respect to the weights
+			gweight = np.dot(delts[i],activation[i-1])
+			grad_weights.append(gweight)
+
+		return(grad_weights,grad_biases)
 
 	def evaluate(self,test_data):
 		raise TODO
