@@ -12,8 +12,7 @@ class Net(object):
 
 		The function initializes the parameters and framework for the network.
 		"""
-
-		self.numlayers = len(self.sizes)
+		
 		self.sizes = sizes
 		self.numlayers = len(sizes)
 		self.weights = [np.random.randn((self.sizes[0],self.sizes[1])), 
