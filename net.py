@@ -14,13 +14,6 @@ class Net(object):
 		"""
 
 		self.numlayers = len(self.sizes)
-
-	def feedforward(self,input):
-		"""
-		Gives the output of the network given an input. The function feeds
-		the input through each layer of the network with the current weights
-		and biases.
-		"""
 		self.sizes = sizes
 		self.numlayers = len(sizes)
 		self.weights = [np.random.randn((self.sizes[0],self.sizes[1])), 
