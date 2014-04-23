@@ -1,5 +1,4 @@
 import random
-
 import numpy as np
 
 class Net(object):
@@ -12,11 +11,10 @@ class Net(object):
 
 		The function initializes the parameters and framework for the network.
 		"""
-		
+
 		self.sizes = sizes
 		self.numlayers = len(sizes)
-		self.weights = [np.random.randn((self.sizes[0],self.sizes[1])), 
-		  np.random.randn((self.sizes[1],self.sizes[2]))]
+		self.weights = [np.random.randn(self.sizes[0],self.sizes[1]), np.random.randn(self.sizes[1],self.sizes[2])]
 		self.biasess = [np.random.randn(self.sizes[1]), np.random.randn(self.sizes[2])]
 
 
@@ -46,7 +44,7 @@ class Net(object):
 			while cur < len(train_data):
 				mini_batch = train_data[cur : cur + mini_batch_size]
 				cur += mini_batch_size
-				update_weights(mini_batch, eta)
+				self.update_weights(mini_batch, eta)
 
 	def update_weights (self, mini_batch, eta):
 		"""
@@ -57,7 +55,7 @@ class Net(object):
 		delta_biases = [np.zeros(self.sizes[1]), np.zeros(self.sizes[2])]
 		
 		for x, y in mini_batch:
-			delta_weights_temp, delta_biases_temp = backprop(x, y)
+			delta_weights_temp, delta_biases_temp = self.backprop(x, y)
 			for i in range(self.numlayers):
 				delta_weights[i] += delta_weights_temp[i]
 				delta_biases[i] += delta_biases_temp[i]
@@ -99,6 +97,8 @@ class Net(object):
 		zlist = []
 		zlist.append(x)
 
+		numlayers = self.numlayers
+
 		for i in range(numlayers - 1):
 			a = np.dot(self.weights[i],x) + self.biases[i]
 			z = sig_vec(a)
@@ -109,13 +109,13 @@ class Net(object):
 
 		gradcost = a - y  # Gradient of the cost function with respect to the activation outputs
 
-		delt_l = gradcost*sig_prime_vec(output) # Error delta for last layer
+		delt_l = gradcost * sig_prime_vec(output) # Error delta for last layer
 		delts = []
 		delts.append(delt_l)
 
-		for i in range(2, numlayers+1): # Calculate errors for previous layers
-			delt = (np.dot(np.tranpose(weights[numlayers-i]),delts[i])*
-					sig_prime_vec(zlist[numlayers-i]))
+		for i in range(2, numlayers + 1): # Calculate errors for previous layers
+			delt = (np.dot(np.tranpose(weights[numlayers - i]),delts[i])*
+					sig_prime_vec(zlist[numlayers - i]))
 			delts.append(delt)
 
 		delts = delts.reverse
