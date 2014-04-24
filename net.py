@@ -130,7 +130,26 @@ class Net(object):
 		return(grad_weights,grad_biases)
 
 	def evaluate(self,test_data):
-		raise TODO
+		sig_prime_vec = np.vectorize(sig_prime)
+		sig_vec = np.vectorize(sig)
+
+		activation = []
+		activation.append(test_data)
+		zlist = []
+		zlist.append(test_data)
+
+		numlayers = self.numlayers
+
+		for i in range(numlayers - 1):
+			a = np.dot(self.weights[i],zlist[i]) + self.biases[i]
+			z = sig_vec(a)
+			activation.append(a)
+			zlist.append(z)
+
+		output = z
+
+		return output
+		# return max(enumerate(output),key=lambda x: x[1])[0] # return the index of the maximum element in output list
 
 
 def sig(x):
