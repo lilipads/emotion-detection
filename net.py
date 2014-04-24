@@ -103,9 +103,7 @@ class Net(object):
 		print "weights", self.weights[0]
 
 		for i in range(numlayers - 1):
-			print "xshape", x.shape
-			print "weight shape", self.weights[0].shape
-			a = np.dot(x, self.weights[i]) # + self.biases[i]
+			a = np.dot(zlist[i],self.weights[i]) + self.biases[i]
 			z = sig_vec(a)
 			activation.append(a)
 			zlist.append(z)
@@ -119,7 +117,8 @@ class Net(object):
 		delts.append(delt_l)
 
 		for i in range(2, numlayers + 1): # Calculate errors for previous layers
-			delt = (np.dot(np.tranpose(weights[numlayers - i]),delts[i]) *
+
+			delt = (np.dot(np.transpose(self.weights[numlayers - i]),delts[i])*
 					sig_prime_vec(zlist[numlayers - i]))
 			delts.append(delt)
 
