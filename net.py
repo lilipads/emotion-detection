@@ -15,7 +15,7 @@ class Net(object):
 		self.sizes = sizes
 		self.numlayers = len(sizes)
 		self.weights = [np.random.randn(self.sizes[0],self.sizes[1]), np.random.randn(self.sizes[1],self.sizes[2])]
-		self.biasess = [np.random.randn(self.sizes[1]), np.random.randn(self.sizes[2])]
+		self.biases = [np.random.randn(self.sizes[1]), np.random.randn(self.sizes[2])]
 
 
 	def SGD(self, train_data, epochs, mini_batch_size, eta):
@@ -99,8 +99,13 @@ class Net(object):
 
 		numlayers = self.numlayers
 
+		print "X", x
+		print "weights", self.weights[0]
+
 		for i in range(numlayers - 1):
-			a = np.dot(self.weights[i],x) + self.biases[i]
+			print "xshape", x.shape
+			print "weight shape", self.weights[0].shape
+			a = np.dot(x, self.weights[i]) # + self.biases[i]
 			z = sig_vec(a)
 			activation.append(a)
 			zlist.append(z)
@@ -114,7 +119,7 @@ class Net(object):
 		delts.append(delt_l)
 
 		for i in range(2, numlayers + 1): # Calculate errors for previous layers
-			delt = (np.dot(np.tranpose(weights[numlayers - i]),delts[i])*
+			delt = (np.dot(np.tranpose(weights[numlayers - i]),delts[i]) *
 					sig_prime_vec(zlist[numlayers - i]))
 			delts.append(delt)
 
