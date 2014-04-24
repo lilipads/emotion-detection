@@ -8,6 +8,7 @@ from array import array
 import gzip
 import struct
 import numpy as np
+import matplotlib.pyplot as plt
 
 # <codecell>
 
@@ -33,11 +34,22 @@ for i in range(n_images):
 
 # <codecell>
 
-temp_images = images[0:10]
-temp_labels = labels[0:10]
+temp_images = images[0:1000]
+temp_labels = labels[0:1000]
 train_data = zip(temp_images, temp_labels)
 
 # <codecell>
 
 detector = net.Net([rows * cols, 400, 10])
 detector.SGD(train_data, 2, 10, 0.1)
+
+# test the neural network
+tests = images[1000:1064]
+plt.figure(figsize=(10, 10))
+for k in xrange(len(tests)):
+    plt.subplot2grid((8, 8), (k / 8, k % 8))
+    plt.axis('off')
+    plt.imshow(1.0 - tests[k].reshape((rows, cols)), cmap=plt.cm.gray)
+    plt.title(detector.evaluate(tests[k]), fontsize=24)
+plt.show()
+
