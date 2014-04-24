@@ -14,7 +14,7 @@ class Net(object):
 
 		self.sizes = sizes
 		self.numlayers = len(sizes)
-		self.weights = [np.random.randn(self.sizes[0],self.sizes[1]), np.random.randn(self.sizes[1],self.sizes[2])]
+		self.weights = [np.random.randn(self.sizes[1],self.sizes[0]), np.random.randn(self.sizes[2],self.sizes[1])]
 		self.biases = [np.random.randn(self.sizes[1]), np.random.randn(self.sizes[2])]
 
 
@@ -51,17 +51,17 @@ class Net(object):
 		Updates the weights and biases by applying gradient descent to the 
 		mini-batch passed into the function. 
 		"""
-		delta_weights = [np.zeros((self.sizes[0],self.sizes[1])), np.zeros((self.sizes[1],self.sizes[2]))]
+		delta_weights = [np.zeros((self.sizes[1],self.sizes[0])), np.zeros((self.sizes[2],self.sizes[1]))]
 		delta_biases = [np.zeros(self.sizes[1]), np.zeros(self.sizes[2])]
 		
 		for x, y in mini_batch:
 			delta_weights_temp, delta_biases_temp = self.backprop(x, y)
-			for i in range(self.numlayers):
+			for i in range(self.numlayers-1):
 				delta_weights[i] += delta_weights_temp[i]
 				delta_biases[i] += delta_biases_temp[i]
 		
 		# adjust the weights
-		for i in range(self.numlayers):
+		for i in range(self.numlayers-1):
 			self.weights[i] += delta_weights[i]
 			self.biases[i] += delta_biases[i]
 
@@ -99,11 +99,8 @@ class Net(object):
 
 		numlayers = self.numlayers
 
-		print "X", x
-		print "weights", self.weights[0]
-
 		for i in range(numlayers - 1):
-			a = np.dot(zlist[i],self.weights[i]) + self.biases[i]
+			a = np.dot(self.weights[i],zlist[i]) + self.biases[i]
 			z = sig_vec(a)
 			activation.append(a)
 			zlist.append(z)
@@ -118,16 +115,16 @@ class Net(object):
 
 		for i in range(2, numlayers + 1): # Calculate errors for previous layers
 
-			delt = (np.dot(np.transpose(self.weights[numlayers - i]),delts[i])*
+			delt = (np.dot(np.transpose(self.weights[numlayers - i]),delts[i-2])*
 					sig_prime_vec(zlist[numlayers - i]))
 			delts.append(delt)
 
-		delts = delts.reverse
-		grad_biases = delts.pop(0) # Calculate the partial derivatives of the cost function wrt to biases
+		delts = delts[::-1]
+		grad_biases = np.delete(delts,0) # Calculate the partial derivatives of the cost function wrt to biases
 
 		grad_weights = []
 		for i in range(1, numlayers): # Calculate the gradient with respect to the weights
-			gweight = np.dot(delts[i],activation[i-1])
+			gweight = np.dot(np.transpose(delts[i].reshape((1,-1))),activation[i-1].reshape((1,-1)))
 			grad_weights.append(gweight)
 
 		return(grad_weights,grad_biases)
