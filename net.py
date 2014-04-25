@@ -62,8 +62,8 @@ class Net(object):
         
         # adjust the weights
         for i in range(self.numlayers-1):
-            self.weights[i] -= delta_weights[i]
-            self.biases[i] -= delta_biases[i]
+            self.weights[i] -= eta*delta_weights[i]
+            self.biases[i] -= eta*delta_biases[i]
 
     def backprop(self,x,y):
         """
