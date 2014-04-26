@@ -3,13 +3,12 @@
 
 # <codecell>
 
-import net
+import modelnet
 from array import array
 import gzip
 import struct
 import numpy as np
 import matplotlib.pyplot as plt
-import json
 
 # <codecell>
 
@@ -39,14 +38,10 @@ temp_images = images[0:1000]
 temp_labels = labels[0:1000]
 train_data = zip(temp_images, temp_labels)
 
-temp_images = images[1000:1064]
-temp_labels = labels[1000:1064]
-test_data = zip(temp_images,temp_labels)
-
 # <codecell>
 
-detector = net.Net([rows * cols, 1, 10])
-detector.SGD(train_data, 1, 10, 0.1)
+detector = modelnet.Network([rows * cols, 500, 10])
+detector.SGD(train_data, 50, 10, 0.1)
 
 # test the neural network
 tests = images[1000:1064]
@@ -55,9 +50,6 @@ for k in xrange(len(tests)):
     plt.subplot2grid((8, 8), (k / 8, k % 8))
     plt.axis('off')
     plt.imshow(1.0 - tests[k].reshape((rows, cols)), cmap=plt.cm.gray)
-    plt.title(np.argmax(detector.feedforward(tests[k])), fontsize=24)
+    plt.title(detector.evaluate(train_data), fontsize=24)
 plt.show()
-
-numcorrect = detector.evaluate(test_data)
-print(numcorrect)
 
