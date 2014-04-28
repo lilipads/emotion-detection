@@ -14,13 +14,8 @@ class Net(object):
 
         self.sizes = sizes
         self.numlayers = len(sizes)
-        # self.weights = [np.zeros((sizes[i],sizes[i+1])) for i in range(self.numlayers - 1)]
-        # self.biases = [np.zeros(sizes[i + 1]) for i in range(self.numlayers - 1)] 
         self.weights = [np.random.randn(sizes[i],sizes[i+1]) for i in range(self.numlayers - 1)]
         self.biases = [np.random.randn(sizes[i + 1]) for i in range(self.numlayers - 1)] 
-        self.delts = []
-        self.activation = []
-        self.grad_weights = []
 
     def feedforward(self,a):
         for i in range(self.numlayers - 1):
@@ -50,13 +45,11 @@ class Net(object):
                 change in the direction of the calculated gradient. 
         """
         for i in range(epochs):
-            # print "epoch", i
             random.shuffle(train_data) # shuffle the data to randomly devide it into mini batches later
             cur = 0
             
             j = 0
             while cur < len(train_data):
-                # print j,
                 j += 1
                 mini_batch = train_data[cur : cur + mini_batch_size]
                 cur += mini_batch_size
@@ -72,19 +65,13 @@ class Net(object):
         
         for x, y in mini_batch:
             delta_weights_temp, delta_biases_temp = self.backprop(x, y)
-            # print "backprop little delta biases", delta_biases_temp[1][0]
             for i in range(self.numlayers-1):
                 delta_weights[i] += delta_weights_temp[i]
                 delta_biases[i] += delta_biases_temp[i]
         
-        # print "summed delta biases", delta_biases[0][300], 
-        
         # adjust the weights
         for i in range(self.numlayers-1):
             self.weights[i] += - eta * delta_weights[i]
-            #if i == 1:
-                # print "before: biases", self.biases[1][0]
-                # print "change: ", - eta* delta_biases[1]
             self.biases[i] += - eta * delta_biases[i]
         
         """
@@ -127,35 +114,23 @@ class Net(object):
         
         # feedforward: compute the output in each layer
         for i in range(1, numlayers):
-            # print "weights", self.weights[i - 1].shape, "activation", activation[i - 1].shape
             zlist[i] = np.dot(activation[i - 1], self.weights[i - 1]) + self.biases[i - 1]
             activation[i] = sig_vec(zlist[i])
             
-        # print y
-        gradcost = activation[numlayers - 1] - y  # Gradient of the cost function with respect to the activation outputs
-        # print "output norm", np.linalg.norm(activation[numlayers - 1]),"gradcost norm", np.linalg.norm(gradcost), "y", np.linalg.norm(y) 
+        gradcost = activation[numlayers - 1] - y  # Gradient of the cost function with respect to the activation outputs 
         
         delts = [0 for i in range(numlayers)]
         delts[self.numlayers - 1] = gradcost * sig_prime_vec(zlist[numlayers - 1]) # last layer
         
         # Backward propagate: calculate errors for previous layers
         for i in range(numlayers - 2, -1, -1): 
-            # print self.weights[i].shape, delts[i + 1].shape
             delts[i] = (np.dot(delts[i + 1], np.transpose(self.weights[i])) * sig_prime_vec(zlist[i]))
         
         # calculate the gradients
         grad_weights = [np.zeros((sizes[i],sizes[i+1])) for i in range(self.numlayers - 1)]
         for i in range(1, numlayers): # Calculate the partial derivatives of the cost function wrt the weights
-            # print i, "delts[i]", delts[i]
-            # print "activation[i - 1]", activation[i - 1]
             grad_weights[i - 1] = np.dot(np.transpose(activation[i - 1].reshape((1,-1))), delts[i].reshape((1,-1))) # check later
-            """
-            if i == 1:
-                self.delts = delts[i]
-                self.activation =activation[i - 1]  
-                self.grad_weights = grad_weights[i - 1]
-            """
-            # print "grad_weights", grad_weights[i - 1]
+
         grad_biases = delts[1:] # Calculate the partial derivatives of the cost function wrt biases
 
         return(grad_weights,grad_biases)
