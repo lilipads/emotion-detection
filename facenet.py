@@ -26,7 +26,7 @@ class Net(object):
         for i in range(self.numlayers - 1):
             z = np.dot(a,self.weights[i]) + self.biases[i]
             a = sig_vec(z)
-            print "Layer: ", a
+            # print "Layer: ", a
         return a
 
     def SGD(self, train_data, epochs, mini_batch_size, eta):
@@ -177,8 +177,15 @@ class Net(object):
         result = []
 
         for (x,y) in test_data:
-            result.append((np.argmax(self.feedforward(x)), np.argmax(y)))
-        print result
+            # print "X: ", x
+            output = self.feedforward(x)
+            # print (output,y)
+            if output > 0.5:
+                estimate = 1
+            else: 
+                estimate = 0
+            result.append((estimate, y))
+        # print result
         return sum(int(x == y) for (x, y) in result)
 
 
