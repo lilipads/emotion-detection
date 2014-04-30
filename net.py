@@ -21,7 +21,7 @@ class Net(object):
         for i in range(self.numlayers - 1):
             z = np.dot(a,self.weights[i]) + self.biases[i]
             a = sig_vec(z)
-            print "Layer: ", a
+            # print "Layer: ", a
         return a
 
     def SGD(self, train_data, epochs, mini_batch_size, eta):
