@@ -17,14 +17,7 @@ class Net(object):
         self.weights = [np.random.randn(sizes[i],sizes[i+1]) for i in range(self.numlayers - 1)]
         self.biases = [np.random.randn(sizes[i + 1]) for i in range(self.numlayers - 1)] 
 
-    def feedforward(self,a):
-        for i in range(self.numlayers - 1):
-            z = np.dot(a,self.weights[i]) + self.biases[i]
-            a = sig_vec(z)
-            # print "Layer: ", a
-        return a
-
-    def SGD(self, train_data, epochs, mini_batch_size, eta):
+    def train(self, train_data, epochs, mini_batch_size, eta):
         """
         Trains the network using mini-batch stochastic gradient descent. 
         Parameters:
@@ -53,9 +46,9 @@ class Net(object):
                 j += 1
                 mini_batch = train_data[cur : cur + mini_batch_size]
                 cur += mini_batch_size
-                self.update_weights(mini_batch, eta)
+                self.updatewb(mini_batch, eta)
 
-    def update_weights (self, mini_batch, eta):
+    def updateweights (self, mini_batch, eta):
         """
         Updates the weights and biases by applying gradient descent to the 
         mini-batch passed into the function. 
@@ -151,10 +144,18 @@ class Net(object):
         """
         result = []
 
+        def feedforward(a):
+            for i in range(1, self.numlayers):
+                z = np.dot(a, self.weights[i - 1]) + self.biases[i - 1]
+                a = sig_vec(z)
+                # print "Layer: ", a
+            return a
+
         for (x,y) in test_data:
-            result.append((np.argmax(self.feedforward(x)), np.argmax(y)))
+            result.append((np.argmax(feedforward(x)), np.argmax(y)))
         print result
         return sum(int(x == y) for (x, y) in result)
+
 
 
 def sig(x):

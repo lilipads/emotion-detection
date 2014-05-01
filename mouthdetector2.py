@@ -17,6 +17,8 @@ for i in range(10):
 
 	trainarray = np.concatenate((np.delete(neutralarray,neuind,0),np.delete(happyarray,hapind,0)))
 	testarray = np.concatenate((neutralarray[neuind],happyarray[hapind]))
+	traingroup = [0 for i in range(45)] + [1 for i in range(16)]
+	testgroup = [0 for i in range(10)] +  [1 for i in range(6)]
 
 	(numtrain, dimtrain) = trainarray.shape
 	(numtest, dimtest) = testarray.shape
@@ -46,7 +48,7 @@ for i in range(10):
 		test_data[j] = (testarray[j][:]/50,testlabels[j])
 
 	detector = net.Net([dimtrain, 15, 2])
-	detector.SGD(train_data, 100, 10, 0.3)
+	detector.train(train_data, 100, 10, 0.3)
 	numcorrect = detector.evaluate(test_data)
 	print "Correct: ", numcorrect
 

@@ -39,7 +39,7 @@ for j in range(numtest):
 	test_data[j] = (testarray[j][:]/50,testlabels[j])
 
 detector = net.Net([dimtrain, 20, 2])
-detector.SGD(train_data, 100, 10, 0.3)
+detector.train(train_data, 100, 10, 0.3)
 numcorrect = detector.evaluate(test_data)
 print "Correct: ", numcorrect
 

@@ -22,6 +22,6 @@ for j in range(numtest):
 for i in range(5, 200, 5):
 	for j in [.1,.2,.3,.4,.5,.6,.7,.8,.9,1]:
 		detector = facenet.Net([dimtrain, i, 1])
-		detector.SGD(train_data, 50, 10, j)
+		detector.train(train_data, 50, 10, j)
 		numcorrect = detector.evaluate(test_data)
 		print "N: ", i, "; Correct: ", numcorrect
