@@ -45,8 +45,8 @@ test_data = zip(temp_images,temp_labels)
 
 # <codecell>
 
-detector = net.Net([rows * cols, 300, 10])
-detector.SGD(train_data, 1, 10, 0.1)
+detector = net.Net([rows * cols, 30, 10])
+detector.SGD(train_data, 30, 10, 0.3)
 
 # test the neural network
 tests = images[1000:1064]
