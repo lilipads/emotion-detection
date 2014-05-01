@@ -46,7 +46,7 @@ class Net(object):
                 j += 1
                 mini_batch = train_data[cur : cur + mini_batch_size]
                 cur += mini_batch_size
-                self.updatewb(mini_batch, eta)
+                self.updateweights(mini_batch, eta)
 
     def updateweights (self, mini_batch, eta):
         """
@@ -148,7 +148,7 @@ class Net(object):
             for i in range(1, self.numlayers):
                 z = np.dot(a, self.weights[i - 1]) + self.biases[i - 1]
                 a = sig_vec(z)
-                # print "Layer: ", a
+                print "Layer: ", a
             return a
 
         for (x,y) in test_data:
