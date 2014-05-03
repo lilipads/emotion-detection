@@ -12,6 +12,8 @@ smiles.csv - list of training image filenames with smiling faces in ../data/smil
 
 haarcascade_mouth.xml and haarcascade_frontalface_default.xml: training sets that the openCV library functions need in order to isolate the mouth
 
+the data folder contains our training data. 
+
 Instructions:
 
 The program is written in python. It requires standard packages such as numpy and csv. It also requires the openCV library for python and needs to access the webcam on the computer. The detailed instructions to run the program in VMWare is the following (assuming python is already installed):
