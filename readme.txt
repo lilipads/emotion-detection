@@ -35,4 +35,8 @@ $ sudo pip install Pillow
 $ python main.py
 
 
+NOTE:
+1. Please sit in a well lit area and straighten the face
+2. To have the program to detect an expression as smiling, it needs a wide, teeth-shown smile. 
+
 
