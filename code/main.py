@@ -101,6 +101,9 @@ if __name__ == '__main__':
         cv2.imshow("preview", frame)
         rval, frame = vc.read()
         key = cv2.waitKey(40)
+        
+       #  For 64 bit systems use, use key=cv2.waitKey(40) & 0xFF
+       
         if key == 27: # exit on ESC
             break
         if key == 32: # press space to save images
